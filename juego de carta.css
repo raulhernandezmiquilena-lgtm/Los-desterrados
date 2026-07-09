@@ -1,0 +1,516 @@
+/* ==========================================================================
+   1. ESTILOS GENERALES Y RESPONSIVOS (PC Y MÓVIL)
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    background-color: #0d001a;
+    font-family: 'Impact', 'Arial Black', sans-serif;
+    color: white;
+    overflow-x: hidden;
+    transition: background-color 0.8s ease;
+}
+
+.pantalla-completa {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 24px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    overflow-y: auto;
+}
+
+.oculto {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+}
+
+.telaraña {
+    position: fixed;
+    font-size: 3rem;
+    z-index: 100;
+    opacity: 0.3;
+    pointer-events: none;
+}
+.tope-izq { top: 5px; left: 5px; }
+.tope-der { top: 5px; right: 5px; transform: scaleX(-1); }
+.abajo-izq { bottom: 5px; left: 5px; transform: scaleY(-1); }
+.abajo-der { bottom: 5px; right: 5px; transform: scale(-1); }
+
+/* ==========================================================================
+   2. INTERFAZ DE LA PORTADA PREMIUM
+   ========================================================================== */
+.portada-contenedor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    z-index: 10;
+}
+
+.aura-portal {
+    position: absolute;
+    top: 15%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(155, 89, 182, 0.6) 0%, rgba(255, 0, 85, 0) 70%);
+    border-radius: 50%;
+    filter: blur(20px);
+    z-index: -1;
+    animation: pulsarPortal 4s ease-in-out infinite;
+}
+
+@keyframes pulsarPortal {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.3); opacity: 0.9; filter: blur(35px); }
+}
+
+.logo-animado {
+    font-size: 6.5rem;
+    position: relative;
+    margin-bottom: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.8));
+}
+
+.bruja-principal {
+    animation: flotarBrujaPremium 3.5s ease-in-out infinite;
+}
+
+@keyframes flotarBrujaPremium {
+    0%, 100% { transform: translateY(0) rotate(-4deg); }
+    50% { transform: translateY(-18px) rotate(6deg); }
+}
+
+.icono-izq, .icono-der {
+    position: absolute;
+    font-size: 2.2rem;
+    opacity: 0.8;
+}
+.icono-izq { top: -10px; left: -30px; animation: destellar 2s infinite alternate; }
+.icono-der { bottom: 10px; right: -30px; animation: destellar 2s infinite alternate 1s; }
+
+@keyframes destellar {
+    from { transform: scale(0.8) rotate(0deg); opacity: 0.5; }
+    to { transform: scale(1.2) rotate(15deg); opacity: 1; filter: drop-shadow(0 0 10px #ff0055); }
+}
+
+.cartas-flotantes {
+    position: absolute;
+    bottom: -15px;
+    font-size: 2.2rem;
+    display: flex;
+    gap: 5px;
+    animation: flotarCartas 3.5s ease-in-out infinite 0.5s;
+}
+
+.cartas-flotantes span {
+    transform: rotate(15deg);
+    display: inline-block;
+}
+
+@keyframes flotarCartas {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.1); }
+}
+
+.cuadro-mensaje-premium {
+    background: linear-gradient(180deg, rgba(25, 10, 45, 0.85) 0%, rgba(10, 2, 20, 0.95) 100%);
+    border: 2px solid rgba(155, 89, 182, 0.3);
+    border-radius: 24px;
+    padding: 35px 25px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), inset 0 0 20px rgba(155, 89, 182, 0.1);
+    backdrop-filter: blur(12px);
+    width: 100%;
+}
+
+.subtitulo-alerta {
+    color: #ff3366;
+    font-size: 0.9rem;
+    letter-spacing: 4px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-shadow: 0 0 10px rgba(255, 51, 102, 0.4);
+}
+
+.texto-miedo-premium {
+    font-size: clamp(2rem, 6vw, 2.8rem);
+    line-height: 1.15;
+    color: #ffffff;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 0, 55, 0.6);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.descripcion-portada {
+    font-family: sans-serif;
+    font-size: 0.95rem;
+    color: #b0a5be;
+    line-height: 1.4;
+    margin-bottom: 35px;
+    font-weight: 300;
+}
+
+.wrapper-boton {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-jugar-premium {
+    padding: 16px 45px;
+    font-size: 1.5rem;
+    font-family: 'Impact', sans-serif;
+    font-weight: bold;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2ecc71 0%, #17a050 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5), 0 0 0 4px rgba(46, 204, 113, 0.2);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    letter-spacing: 2px;
+}
+
+.btn-jugar-premium::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 30%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(30deg);
+    transition: none;
+}
+
+.btn-jugar-premium:hover::after {
+    left: 140%;
+    transition: all 0.6s ease-in-out;
+}
+
+.btn-jugar-premium:hover {
+    transform: translateY(-4px) scale(1.04);
+    box-shadow: 0 15px 30px #2ecc71, 0 0 0 6px rgba(46, 204, 113, 0.3);
+    background: linear-gradient(135deg, #23df74 0%, #1ebd62 100%);
+}
+
+/* ==========================================================================
+   3. INTERFAZ DE SELECCIÓN (EL MAZO EN PC)
+   ========================================================================== */
+.titulo-juego { 
+    font-size: clamp(2.2rem, 6vw, 3.8rem); 
+    margin-bottom: 35px; 
+    letter-spacing: 2px;
+    transition: transform 1s ease, opacity 1s ease;
+}
+.letra-l { color: #00CCFF; text-shadow: 0 0 15px #00CCFF; }
+.letra-d { color: #9b59b6; text-shadow: 0 0 15px #9b59b6; }
+
+.mazo {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    transition: transform 1.2s ease, opacity 1s ease;
+}
+
+.carta {
+    width: 180px;
+    height: 260px;
+    border-radius: 18px;
+    border: 4px solid white;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+.carta .hola { 
+    position: absolute; 
+    top: 12px; 
+    left: 12px; 
+    font-size: 0.75rem; 
+    font-family: 'Arial', sans-serif;
+    opacity: 0.6;
+}
+
+.carta .emoji { 
+    font-size: 4.2rem; 
+    margin-bottom: 8px;
+}
+
+.carta .texto-dificultad {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.azul { background: linear-gradient(135deg, #0099ff, #0044cc); border-color: #00CCFF; }
+.verde-carta { background: linear-gradient(135deg, #2ecc71, #1bc47c); border-color: #2ecc71; }
+.rojo-morado { background: linear-gradient(135deg, #9b59b6, #663399); border-color: #ba7ae2; }
+
+.azul:hover { box-shadow: 0 0 40px #00CCFF; transform: translateY(-15px) rotate(-1deg); }
+.verde-carta:hover { box-shadow: 0 0 40px #2ecc71; transform: translateY(-15px) rotate(0deg); }
+.rojo-morado:hover { box-shadow: 0 0 40px #9b59b6; transform: translateY(-15px) rotate(1deg); }
+
+/* NUEVOS COLORES PARA LAS DOS CARTAS SURGIDA DEL REMOLINO */
+.dificil-premium-dorado { background: linear-gradient(135deg, #ffcc00, #997700); border-color: #ffea00; color: #ffffff; }
+.dificil-premium-dorado:hover { box-shadow: 0 0 45px #ffcc00; transform: translateY(-15px) scale(1.05); }
+
+.extremo-premium-rojo { background: linear-gradient(135deg, #ff0000, #7a0000); border-color: #ff3333; color: #ffffff; }
+.extremo-premium-rojo:hover { box-shadow: 0 0 45px #ff0000; transform: translateY(-15px) scale(1.05); }
+
+/* ==========================================================================
+   4. INTERFAZ ENFOCADA (EL RETO REVELADO)
+   ========================================================================== */
+.contenedor-enfoque {
+    width: 100%;
+    max-width: 550px;
+    background: rgba(0, 0, 0, 0.85);
+    padding: clamp(24px, 5vw, 40px);
+    border-radius: 24px;
+    border: 3px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.85);
+    animation: entrarReto 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+@keyframes entrarReto {
+    from { opacity: 0; transform: translateY(20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.nivel-revelado {
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 8px;
+}
+
+.efecto-revelado {
+    font-size: clamp(1rem, 3vw, 1.3rem);
+    color: #ff3366;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    font-weight: bold;
+}
+
+.reto-texto {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: clamp(1.2rem, 3.8vw, 1.6rem);
+    line-height: 1.45;
+    color: #f5f5f5;
+    margin-bottom: 35px;
+    font-weight: 300;
+}
+
+/* ==========================================================================
+   5. SINTONÍA VISUAL (FONDOS Y BORDES DINÁMICOS)
+   ========================================================================== */
+body.fondo-azul { background-color: #000c24; }
+body.fondo-azul .contenedor-enfoque { border-color: rgba(0, 204, 255, 0.4); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 204, 255, 0.1); }
+
+body.fondo-verde { background-color: #011f01; }
+body.fondo-verde .contenedor-enfoque { border-color: rgba(46, 204, 113, 0.4); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(46, 204, 113, 0.1); }
+
+body.fondo-extremo { background-color: #1f0110; }
+body.fondo-extremo .contenedor-enfoque { border-color: rgba(155, 89, 182, 0.4); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 30px rgba(155, 89, 182, 0.1); }
+
+/* ==========================================================================
+   6. ADAPTACIÓN EXCLUSIVA PARA TELÉFONOS (RESPONSIVO)
+   ========================================================================== */
+@media (max-width: 768px) {
+    .telaraña { font-size: 2rem; }
+    .cuadro-mensaje-premium { padding: 25px 15px; }
+    .logo-animado { font-size: 5rem; }
+
+    .mazo {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .carta {
+        width: 90%;
+        max-width: 320px;
+        min-height: 95px;
+        height: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 20px 20px 20px 30px;
+        gap: 20px;
+        border-radius: 15px;
+        position: relative;
+    }
+
+    .carta .hola {
+        position: relative;
+        top: 0;
+        right: 0;
+        left: 0;
+        display: block;
+        font-size: 0.7rem;
+        line-height: 1.2;
+        margin-bottom: 4px;
+        white-space: normal;
+    }
+
+    .carta .texto-dificultad { font-size: 1.3rem; }
+    .carta .emoji { font-size: 2.5rem; margin-bottom: 0; }
+
+    .azul:hover, .verde-carta:hover, .rojo-morado:hover, .dificil-premium-dorado:hover, .extremo-premium-rojo:hover { 
+        transform: scale(1.03); 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+}
+
+@media (max-width: 400px) {
+    .btn-jugar-premium { padding: 14px 35px; font-size: 1.3rem; }
+}
+
+/* ==========================================================================
+   7. ESTILOS DE LA CALIFICACIÓN (RAULTHORWORLD ROBOT)
+   ========================================================================== */
+.z-premium { z-index: 500; }
+.border-feedback { border-color: #ff0055 !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 0, 85, 0.3) !important; }
+.robot-avatar { font-size: 4rem; margin-bottom: 15px; animation: destellar 2s infinite alternate; }
+.estrellas-contenedor { display: flex; justify-content: center; gap: 15px; margin: 25px 0; }
+.estrella { font-size: 2.8rem; cursor: pointer; transition: transform 0.2s ease, filter 0.2s ease; }
+.estrella:hover { transform: scale(1.3); filter: drop-shadow(0 0 10px #ffcc00); }
+#mensaje-agradecimiento { color: #2ecc71; margin-top: 15px; font-size: 1.1rem; }
+
+/* ==========================================================================
+   8. EFECTO CARTA PREMIO DORADA STANDARD
+   ========================================================================== */
+body.fondo-dorado {
+    background-color: #1a1300;
+    background: radial-gradient(circle, #2d2000 0%, #0d0900 100%);
+}
+body.fondo-dorado .contenedor-enfoque {
+    background: linear-gradient(135deg, rgba(45, 32, 0, 0.95) 0%, rgba(15, 11, 0, 0.98) 100%);
+    border: 3px solid #ffcc00;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 40px rgba(255, 204, 0, 0.4);
+    animation: entrarReto 0.5s ease forwards, sacudidaPremio 0.5s ease-in-out 2;
+}
+body.fondo-dorado .efecto-revelado { color: #ffcc00; text-shadow: 0 0 15px rgba(255, 204, 0, 0.8); }
+
+@keyframes sacudidaPremio {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    20% { transform: scale(1.02) rotate(-1deg); }
+    40% { transform: scale(1.02) rotate(1deg); }
+    60% { transform: scale(1.04) rotate(-1deg); }
+    80% { transform: scale(1.04) rotate(1deg); }
+}
+
+/* ==========================================================================
+   9. EFECTOS DEL REMOLINO DE ABSORCIÓN MÍSTICA (NUEVO)
+   ========================================================================== */
+.remolino-vortex {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 0px;
+    height: 0px;
+    transform: translate(-50%, -50%) rotate(0deg);
+    background: radial-gradient(circle, rgba(255, 0, 85, 0.9) 0%, rgba(155, 89, 182, 0.7) 40%, rgba(0, 0, 0, 0) 70%);
+    border-radius: 50%;
+    z-index: 999;
+    pointer-events: none;
+    box-shadow: 0 0 100px rgba(155, 89, 182, 0.8);
+    transition: width 1.5s ease-in-out, height 1.5s ease-in-out, opacity 0.5s ease;
+}
+
+/* Animación cuando el vórtice succiona */
+.activar-vortex {
+    width: 160vmax;
+    height: 160vmax;
+    animation: rotarRemolino 2.5s linear infinite;
+}
+
+@keyframes rotarRemolino {
+    0% { transform: translate(-50%, -50%) rotate(0deg); filter: hue-rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); filter: hue-rotate(360deg); }
+}
+
+/* Animaciones de succión para PC y Móviles */
+.succionar-todo {
+    transform: scale(0) rotate(720deg) !important;
+    opacity: 0 !important;
+}
+
+.oculto-vortex {
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+}
+/* ==========================================================================
+   ESTILOS DE LA FLECHA PARA REGRESAR (RESPONSIVE PC & MOVIL)
+   ========================================================================== */
+.flecha-atras {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(47, 211, 6, 0.15);
+    color: #fff;
+    border: 2px solid #22a108;
+    padding: 10px 16px;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(32, 233, 5, 0.3);
+}
+
+.flecha-atras:hover {
+    background: #09ce72;
+    box-shadow: 0 0 20px #03a834;
+    transform: scale(1.05);
+}
+
+/* Adaptación móvil */
+@media (max-width: 600px) {
+    .flecha-atras {
+        top: 15px;
+        left: 15px;
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+    .texto-flecha {
+        display: none; /* En teléfonos solo se muestra el emoji de la flecha para optimizar espacio */
+    }
+}
