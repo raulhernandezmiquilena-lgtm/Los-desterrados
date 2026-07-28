@@ -1,5 +1,5 @@
 // ==========================================================================
-// BASE DE DATOS MÁXIMA DE RETOS ÚNICOS (MÁS DE 50 POR CATEGORÍA)
+// BASE DE DATOS MÁXIMA DE RETOS ÚNICOS
 // ==========================================================================
 const baseDeCartas = {
     "Fácil": [
@@ -137,7 +137,7 @@ const baseDeCartas = {
         { texto: "El Beso de la Muerte: Dale un beso en la mejilla a la persona que el mazo decida (o haz 30 lagartijas de penalización).", efecto: "Afecto maldito 💋" },
         { texto: "El Destierro de Redes: Borra tu última publicación o foto de tus redes sociales sin dar explicaciones a nadie.", efecto: "Purga digital ❌" },
         { texto: "La Falsa Pelea: Llama a un amigo que no esté aquí y empieza a discutir de la nada por un objeto imaginario hasta que se lo crea.", efecto: "Psicosis 😡" },
-        { texto: "El Llorón: Llora y quéjate amargamente cada vez que un jugador tira una carta durante los próximos 5 minutos.", efecto: "Lamento tétrico 😭" },
+        { texto: "El Llorón: Llora y quéizate amargamente cada vez que un jugador tira una carta durante los próximos 5 minutos.", efecto: "Lamento tétrico 😭" },
         { texto: "El Juramento de Sangre: Promete regalarle algo tuyo que le guste mucho al jugador de tu izquierda antes de que termine la semana.", efecto: "Ofrenda material 🎁" },
         { texto: "La Confesión del Amor: Revela el nombre completo de la persona que te gusta o te vuelve loco en secreto en este momento.", efecto: "Corazón expuesto 💘" },
         { texto: "La Pesadilla del Teléfono: Deja que el grupo ponga de fondo de pantalla de tu celular la imagen más ridícula que encuentren durante el resto del juego.", efecto: "Parásito visual 🖼️" },
@@ -168,17 +168,82 @@ let mazoDeJuego = {
 
 // VARIABLES DE CONTROL DE EVENTOS
 let contadorCartas = 0;
-let yaCalifico = false; // Se reinicia en cada recarga
+let yaCalifico = false; 
 let modoVortexActivado = false; 
-let contadorNivel2 = 0; // Cuenta las cartas usadas en el mazo colapsado
+let contadorNivel2 = 0; 
 
+// ==========================================================================
+// BARRA DE CARGA REUTILIZABLE
+// ==========================================================================
+function ejecutarBarraDeCarga(mensaje, accionAlCompletar, duracionMs = 1500) {
+    let overlay = document.getElementById('loader-overlay');
+    
+    // Si no existe el loader overlay en el DOM, se crea dinámicamente
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'loader-overlay';
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        `;
+        overlay.innerHTML = `
+            <p id="loader-texto" style="color: #27F5C2; font-family: sans-serif; font-weight: bold; margin-bottom: 20px; font-size: 1.1rem; text-shadow: 0 0 10px rgba(39,245,194,0.5); text-align: center; padding: 0 20px;"></p>
+            <div style="width: 75%; max-width: 300px; height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; border: 1px solid rgba(39,245,194,0.3);">
+                <div id="loader-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #27F5C2, #e0115f); border-radius: 10px;"></div>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+    }
+
+    const textoEl = document.getElementById('loader-texto');
+    const barEl = document.getElementById('loader-bar');
+
+    textoEl.innerText = mensaje || "Cargando...";
+    barEl.style.transition = 'none';
+    barEl.style.width = '0%';
+
+    overlay.style.pointerEvents = 'all';
+    overlay.style.opacity = '1';
+
+    setTimeout(() => {
+        barEl.style.transition = `width ${duracionMs / 1000}s linear`;
+        barEl.style.width = '100%';
+    }, 50);
+
+    setTimeout(() => {
+        overlay.style.opacity = '0';
+        overlay.style.pointerEvents = 'none';
+        if (typeof accionAlCompletar === 'function') {
+            accionAlCompletar();
+        }
+    }, duracionMs + 100);
+}
+
+// ==========================================================================
+// FLUJO DEL JUEGO Y SELECCIÓN DE CARTAS
+// ==========================================================================
+
+// 1. MOMENTO DE LA BARRA 1: Ingresar al Altar
 function empezarJuego() {
-    document.getElementById('pantalla-inicio').classList.add('oculto');
-    document.getElementById('pantalla-juego').classList.remove('oculto');
+    ejecutarBarraDeCarga("Ingresando al altar...", () => {
+        document.getElementById('pantalla-inicio').classList.add('oculto');
+        document.getElementById('pantalla-juego').classList.remove('oculto');
+        centrarCartaCentral();
+    }, 1500);
 }
 
 function seleccionar(dificultad) {
-    if (mazoDeJuego[dificultad].length === 0) {
+    if (!mazoDeJuego[dificultad] || mazoDeJuego[dificultad].length === 0) {
         mazoDeJuego[dificultad] = [...baseDeCartas[dificultad]];
     }
 
@@ -186,10 +251,15 @@ function seleccionar(dificultad) {
     const indiceAleatorio = Math.floor(Math.random() * listaCartas.length);
     const cartaRobada = listaCartas.splice(indiceAleatorio, 1)[0];
 
+    // Limpiamos todas las clases de fondo previas
     document.body.classList.remove('fondo-azul', 'fondo-verde', 'fondo-extremo', 'fondo-dorado');
 
-    if (cartaRobada.texto.includes("¡Carta Premio!")) {
+    // Asignación de colores
+    if (cartaRobada.texto && cartaRobada.texto.includes("¡Carta Premio!")) {
         document.body.classList.add('fondo-dorado');
+    } else if (modoVortexActivado) {
+        if (dificultad === 'Difícil') document.body.classList.add('fondo-dorado');
+        else if (dificultad === 'Extremo') document.body.classList.add('fondo-extremo');
     } else {
         if (dificultad === 'Fácil') document.body.classList.add('fondo-azul');
         else if (dificultad === 'Difícil') document.body.classList.add('fondo-verde');
@@ -213,25 +283,33 @@ function volverAlMazo() {
         contadorNivel2++;
     }
 
-    // 1. Alerta de estrellas prioritario a la 4ta carta
+    // Alerta de feedback a la 4ta carta servida
     if (contadorCartas === 4 && !yaCalifico) {
         document.getElementById('notificacion-feedback').classList.remove('oculto');
         return; 
     }
 
-    // Muestra la flecha de escape si ya se jugaron 4 cartas en el Nivel 2
+    // Botón para regresar al altar si ya pasaron 4 cartas en Nivel 2
     if (modoVortexActivado && contadorNivel2 >= 4) {
-        document.getElementById('btn-volver-altar').classList.remove('oculto');
+        const btnVolver = document.getElementById('btn-volver-altar');
+        if (btnVolver) btnVolver.classList.remove('oculto');
     }
 
-    // 2. Condición del Remolino (Carta 25)
+    // 2. MOMENTO DE LA BARRA 2: Entrar al Nivel 2
     if (contadorCartas > 25 && !modoVortexActivado) {
-        ejecutarRemolinoMistico();
+        ejecutarBarraDeCarga("Entrando al Nivel 2...", () => {
+            ejecutarRemolinoMistico();
+        }, 1800);
         return; 
     }
 
     document.getElementById('pantalla-juego').classList.remove('oculto');
+    setTimeout(actualizarEfectoTamanoCartas, 50);
 }
+
+// ==========================================================================
+// MODO VÓRTEX / REMOLINO MÍSTICO
+// ==========================================================================
 
 function ejecutarRemolinoMistico() {
     modoVortexActivado = true;
@@ -240,86 +318,178 @@ function ejecutarRemolinoMistico() {
     const mazoUI = document.getElementById('contenedor-mazo');
     const tituloUI = document.getElementById('titulo-principal');
 
-    vortex.classList.remove('oculto-vortex');
-    vortex.classList.add('activar-vortex');
+    if (vortex) {
+        vortex.classList.remove('oculto-vortex');
+        vortex.classList.add('activar-vortex');
+    }
 
     setTimeout(() => {
-        mazoUI.classList.add('succionar-todo');
-        tituloUI.classList.add('succionar-todo');
+        if (mazoUI) mazoUI.classList.add('succionar-todo');
+        if (tituloUI) tituloUI.classList.add('succionar-todo');
     }, 500);
 
     setTimeout(() => {
-        vortex.classList.remove('activar-vortex');
-        vortex.classList.add('oculto-vortex');
+        if (vortex) {
+            vortex.classList.remove('activar-vortex');
+            vortex.classList.add('oculto-vortex');
+        }
         
-        tituloUI.innerHTML = `<span style="color:#27F5C2; text-shadow: 0 0 20px #0ab5bb;;">Los Desterrados 2 </span>`;
+        if (tituloUI) {
+            tituloUI.innerHTML = `<span style="color:#27F5C2; text-shadow: 0 0 20px #0ab5bb;">Los Desterrados 2</span>`;
+        }
         
-        mazoUI.innerHTML = `
-            <div class="carta dificil-premium-dorado" onclick="seleccionar('Difícil')">
-                <span class="hola">Sobrevive al nuevo orden</span>
-                <div class="emoji">👑</div>
-                <span class="texto-dificultad">Difícil Dorado</span>
-            </div>
-            <div class="carta extremo-premium-rojo" onclick="seleccionar('Extremo')">
-                <span class="hola">El juicio final de tus amistades</span>
-                <div class="emoji">💀</div>
-                <span class="texto-dificultad">Extremo Rojo</span>
-            </div>
-        `;
+        if (mazoUI) {
+            mazoUI.innerHTML = `
+                <div class="carta dificil-premium-dorado" onclick="seleccionar('Difícil')">
+                    <span class="hola">Sobrevive al nuevo orden</span>
+                    <div class="emoji">👑</div>
+                    <span class="texto-dificultad">Difícil Dorado</span>
+                </div>
+                <div class="carta extremo-premium-rojo" onclick="seleccionar('Extremo')">
+                    <span class="hola">El juicio final de tus amistades</span>
+                    <div class="emoji">💀</div>
+                    <span class="texto-dificultad">Extremo Rojo</span>
+                </div>
+            `;
+        }
     }, 2000);
 
     setTimeout(() => {
-        mazoUI.classList.remove('succionar-todo');
-        tituloUI.classList.remove('succionar-todo');
+        if (mazoUI) mazoUI.classList.remove('succionar-todo');
+        if (tituloUI) tituloUI.classList.remove('succionar-todo');
+        
         document.getElementById('pantalla-juego').classList.remove('oculto');
+        centrarCartaCentral();
     }, 2600);
 }
 
-// Resetea el tablero al Altar original
 function regresarAlAltarOriginal() {
     modoVortexActivado = false;
     contadorCartas = 0; 
     contadorNivel2 = 0;
 
-    document.getElementById('btn-volver-altar').classList.add('oculto');
+    const btnVolver = document.getElementById('btn-volver-altar');
+    if (btnVolver) btnVolver.classList.add('oculto');
 
     const tituloUI = document.getElementById('titulo-principal');
-    tituloUI.innerHTML = `<span class="letra-l">L</span>os <span class="letra-d">D</span>esterrados`;
+    if (tituloUI) {
+        tituloUI.innerHTML = `<span class="letra-l">L</span>os <span class="letra-d">D</span>esterrados`;
+    }
 
     const mazoUI = document.getElementById('contenedor-mazo');
-    mazoUI.innerHTML = `
-        <div class="carta azul" onclick="seleccionar('Fácil')">
-            <span class="hola">No te confíes de mi color</span>
-            <div class="emoji">🎭</div>
-            <span class="texto-dificultad">Fácil</span>
-        </div>
-        <div class="carta verde-carta" onclick="seleccionar('Difícil')">
-            <span class="hola">Puede que termines en una relación hoy</span>
-            <div class="emoji">🌶️</div>
-            <span class="texto-dificultad">Difícil</span>
-        </div>
-        <div class="carta rojo-morado" onclick="seleccionar('Extremo')">
-            <span class="hola">Elígeme, no soy mala; solo podrías perder una amistad</span>
-            <div class="emoji">🥀</div>
-            <span class="texto-dificultad">Extremo</span>
-        </div>
-    `;
+    if (mazoUI) {
+        mazoUI.innerHTML = `
+            <div class="carta azul" onclick="seleccionar('Fácil')">
+                <span class="hola">No te confíes de mi color</span>
+                <div class="emoji">🎭</div>
+                <span class="texto-dificultad">Fácil</span>
+            </div>
+            <div class="carta verde-carta" onclick="seleccionar('Difícil')">
+                <span class="hola">Puede que termines en una relación hoy</span>
+                <div class="emoji">🌶️</div>
+                <span class="texto-dificultad">Difícil</span>
+            </div>
+            <div class="carta rojo-morado" onclick="seleccionar('Extremo')">
+                <span class="hola">Elígeme, no soy mala; solo podrías perder una amistad</span>
+                <div class="emoji">🥀</div>
+                <span class="texto-dificultad">Extremo</span>
+            </div>
+        `;
+    }
+
+    setTimeout(centrarCartaCentral, 100);
 }
+
+// ==========================================================================
+// FEEDBACK Y CALIFICACIONES
+// ==========================================================================
 
 function calificar(estrellas) {
     console.log(`El usuario calificó con: ${estrellas} estrellas.`);
     yaCalifico = true;
 
     const graciasText = document.getElementById('mensaje-agradecimiento');
-    graciasText.classList.remove('oculto');
+    if (graciasText) graciasText.classList.remove('oculto');
 
     setTimeout(() => {
-        document.getElementById('notificacion-feedback').classList.add('oculto');
-        
-        if (contadorCartas > 25 && !modoVortexActivado) {
-            ejecutarRemolinoMistico();
-        } else {
-            document.getElementById('pantalla-juego').classList.remove('oculto');
-        }
+        cerrarFeedback();
     }, 2000);
 }
+
+function cerrarFeedback() {
+    document.getElementById('notificacion-feedback').classList.add('oculto');
+    
+    if (contadorCartas > 25 && !modoVortexActivado) {
+        ejecutarBarraDeCarga("Entrando al Nivel 2...", () => {
+            ejecutarRemolinoMistico();
+        }, 1800);
+    } else {
+        document.getElementById('pantalla-juego').classList.remove('oculto');
+        actualizarEfectoTamanoCartas();
+    }
+}
+
+// ==========================================================================
+// EFECTO DE TAMAÑO Y CARRUSEL 3D AL DESLIZAR
+// ==========================================================================
+
+function actualizarEfectoTamanoCartas() {
+    const mazo = document.getElementById('contenedor-mazo');
+    const cartas = document.querySelectorAll('#contenedor-mazo .carta');
+    if (!mazo || !cartas.length) return;
+
+    const centroMazo = mazo.getBoundingClientRect().left + (mazo.clientWidth / 2);
+
+    cartas.forEach(carta => {
+        const rectCarta = carta.getBoundingClientRect();
+        const centroCarta = rectCarta.left + (rectCarta.width / 2);
+        
+        const distancia = Math.abs(centroMazo - centroCarta);
+        const maxDistancia = mazo.clientWidth / 1.5;
+
+        // Tamaño dinámico: 1.15x al centro, 0.78x a los lados
+        let escala = 1.15 - (distancia / maxDistancia) * 0.4;
+        escala = Math.max(0.78, Math.min(1.15, escala));
+
+        // Opacidad
+        let opacidad = 1 - (distancia / maxDistancia) * 0.7;
+        opacidad = Math.max(0.4, Math.min(1, opacidad));
+
+        carta.style.transform = `scale(${escala})`;
+        carta.style.opacity = opacidad;
+
+        if (distancia < 60) {
+            carta.style.zIndex = "10";
+        } else {
+            carta.style.zIndex = "1";
+        }
+    });
+}
+
+function centrarCartaCentral() {
+    const mazo = document.getElementById('contenedor-mazo');
+    const cartas = document.querySelectorAll('#contenedor-mazo .carta');
+    
+    if (cartas.length >= 2) {
+        let cartaMedio = cartas.length >= 3 ? cartas[1] : cartas[0];
+        const posScroll = cartaMedio.offsetLeft - (mazo.clientWidth / 2) + (cartaMedio.clientWidth / 2);
+        
+        mazo.scrollTo({
+            left: posScroll,
+            behavior: 'smooth'
+        });
+        
+        setTimeout(actualizarEfectoTamanoCartas, 300);
+    } else {
+        actualizarEfectoTamanoCartas();
+    }
+}
+
+// Event listeners para scroll continuo y cambio de ventana
+document.addEventListener('DOMContentLoaded', () => {
+    const mazo = document.getElementById('contenedor-mazo');
+    if (mazo) {
+        mazo.addEventListener('scroll', actualizarEfectoTamanoCartas);
+    }
+    window.addEventListener('resize', centrarCartaCentral);
+});
