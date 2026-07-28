@@ -1,3 +1,4 @@
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,13 +8,30 @@
 </head>
 <body>
 
+    <!-- DECORACIÓN TELARAÑAS -->
     <div class="telaraña tope-izq">🕸️</div>
     <div class="telaraña tope-der">🕸️</div>
     <div class="telaraña abajo-izq">🕸️</div>
     <div class="telaraña abajo-der">🕸️</div>
 
-    <div id="vorticemistico" class="remolino-vortex oculto-vortex"></div>
+    <!-- PANTALLA DE CARGA ÉPICA DE 2 SEGUNDOS -->
+    <div id="pantalla-carga-nivel" class="pantalla-carga-contenedor oculto-carga">
+        <div class="glow-nivel"></div>
+        <div class="contenido-carga">
+            <span class="icono-nivel-epico">⚡</span>
+            <h2 class="titulo-nivel-epico">¡ALERTA DE RETO!</h2>
+            <p class="subtitulo-nivel-epico">Preparando la siguiente dimensión de dificultad...</p>
+            
+            <!-- BARRA DE CARGA FLUIDA (2 SEGUNDOS) -->
+            <div class="barra-carga-marco">
+                <div class="barra-carga-linea"></div>
+            </div>
+            
+            <span class="texto-cargando">CARGANDO NUEVO NIVEL...</span>
+        </div>
+    </div>
 
+    <!-- PANTALLA 1: PORTADA / INICIO -->
     <div id="pantalla-inicio" class="pantalla-completa">
         <div class="portada-contenedor">
             <div class="aura-portal"></div>
@@ -44,16 +62,21 @@
         </div>
     </div>
 
+    <!-- PANTALLA 2: SELECCIÓN DE CARTAS DE JUEGO -->
     <div id="pantalla-juego" class="pantalla-completa oculto">
         
         <button id="btn-volver-altar" class="flecha-atras oculto" onclick="regresarAlAltarOriginal()">
             ⬅️ <span class="texto-flecha">Regresar</span>
         </button>
 
-        <h1 id="titulo-principal" class="titulo-juego">
-            <span class="letra-l">L</span>os 
-            <span class="letra-d">D</span>esterrados
-        </h1>
+        <!-- TÍTULO LEVITANDO CON HALO DE ÁNGEL -->
+        <div class="contenedor-titulo-levitando">
+            <div class="halo-angel">✨😇✨</div>
+            <h1 id="titulo-principal" class="titulo-juego">
+                <span class="letra-l">L</span>os 
+                <span class="letra-d">D</span>esterrados
+            </h1>
+        </div>
         
         <div id="contenedor-mazo" class="mazo">
             <div class="carta azul" onclick="seleccionar('Fácil')">
@@ -76,6 +99,7 @@
         </div>
     </div>
 
+    <!-- PANTALLA 3: RETO REVELADO (ENFOQUE) -->
     <div id="pantalla-enfoque" class="pantalla-completa oculto">
         <div class="contenedor-enfoque">
             <h2 id="enfoque-nivel" class="nivel-revelado">Nivel</h2>
@@ -88,6 +112,7 @@
         </div>
     </div>
 
+    <!-- PANTALLA 4: FEEDBACK ROBOT -->
     <div id="notificacion-feedback" class="pantalla-completa oculto z-premium">
         <div class="contenedor-enfoque border-feedback">
             <div class="robot-avatar">🤖✨</div>
